@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+
+
 
 namespace ImageProcessor
 {
@@ -23,9 +20,10 @@ namespace ImageProcessor
         private static void CreateItems(string sourceDir, string destDir)
         {
             DirectoryInfo dir = new DirectoryInfo(sourceDir);
-            List<FileInfo> filesInfos = new List<FileInfo>(dir.GetFiles());
+            List<FileInfo> filesInfos = new List<FileInfo>(dir.GetFiles("*.", SearchOption.AllDirectories));
             Directory.CreateDirectory(destDir);
-            Image newImage = Image.FromFile("SampImag.jpg");
+            System.Drawing.Image newImage = System.Drawing.Image.FromFile(filesInfos[0].ToString());
+            Console.WriteLine(newImage.Tag); 
 
             //foreach (FileInfo fileinfo in filesInfos)
             //{
