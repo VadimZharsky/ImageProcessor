@@ -54,9 +54,6 @@ namespace ImageProcessor
                 
             }
 
-
-
-
             //foreach (FileInfo fileinfo in filesInfos)
             //{
             //    string withoutExtension = Path.GetFileNameWithoutExtension(fileinfo.Name);
