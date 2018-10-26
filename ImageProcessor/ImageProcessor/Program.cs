@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing.Imaging;
+using System.Text.RegularExpressions;
 
 namespace ImageProcessor
 {
@@ -14,9 +15,42 @@ namespace ImageProcessor
         static void Main(string[] args)
         {
             string sourceDir = @"D:\c#works\it academy";
-            CreateItems(sourceDir);
-
+            //CreateItems(sourceDir);
+            DateOntoImage(sourceDir);
             Console.ReadKey();
+        }
+
+
+
+        private static void DateOntoImage(string sourceDir)
+        {
+            var dir = new DirectoryInfo(sourceDir);
+            List<FileInfo> filesInfos = new List<FileInfo>(dir.GetFiles("*.jpg"));
+            List<Photo> photos = new List<Photo>();
+            DirectoryInfo parent = dir.Parent;
+            string destDir = $@"{parent.FullName}\newDossier";
+            Directory.CreateDirectory(destDir);
+            int count = 1;
+            foreach (FileInfo file in filesInfos)
+            {
+                photos.Add(new Photo(file));
+            }
+            foreach (Photo photo in photos)
+            {
+                Console.WriteLine($"{count}/{photos.Count} successful");
+                string destWay = $@"{destDir}\{photo.name}{photo.dateTaken}{photo.extension}";
+                FileStream stream = new FileStream(photo.fileInfo.FullName, FileMode.Open, FileAccess.Read);
+                Graphics graphicImage = Graphics.FromImage(photo.photoImage);
+                graphicImage.DrawString(photo.dateTaken, new Font("Arial", 18, FontStyle.Bold),
+                Brushes.Black, new Point(photo.photoImage.Width-250, 10));
+                graphicImage.DrawString(photo.gpsCoords, new Font("Arial", 18, FontStyle.Bold),
+                Brushes.Black, new Point(10, 10));
+                graphicImage.Save();
+                photo.photoImage.Save(destWay, ImageFormat.Jpeg); 
+                Console.Clear();
+                count++;
+            }
+            Console.WriteLine($"{count-1}/{photos.Count} successful");
         }
 
         private static void CreateItems(string sourceDir)
@@ -25,44 +59,25 @@ namespace ImageProcessor
             List<FileInfo> filesInfos = new List<FileInfo>(dir.GetFiles("*.jpg"));
             List<Photo> photos = new List<Photo>();
             DirectoryInfo parent = dir.Parent;
-            //parent.CreateSubdirectory("newFolder");
             string destDir = $@"{parent.FullName}\newDossier";
             Directory.CreateDirectory(destDir);
+            int count = 1;
             foreach (FileInfo file in filesInfos)
             {
-                var getImage = Image.FromFile(file.FullName);
-             
-                
-                photos.Add(new Photo() { fileInfo = file, name = file.Name, image = getImage });
+                photos.Add(new Photo(file));
             }
             foreach (Photo photo in photos)
             {
-
-                try
-                {
-                    PropertyItem propItem = photo.image.GetPropertyItem(36867);
-                    string dateTaken = Encoding.UTF8.GetString(photo.propertyItem.Value);
-                    string newName = $"{Path.GetFileNameWithoutExtension(photo.fileInfo.Name)}_{dateTaken}{photo.fileInfo.Extension}";
-                    File.Copy($@"{dir.FullName}\{photo.fileInfo.Name}", $@"{destDir}\{newName}");
-                }
-                catch
-                {
-                    string dateTaken = photo.fileInfo.CreationTime.ToString();
-                    string newName = $"{Path.GetFileNameWithoutExtension(photo.fileInfo.Name)}{photo.fileInfo.Extension}";
-                    File.Copy($@"{dir.FullName}\{photo.fileInfo.Name}", $@"{destDir}\{newName}");
-                }
-                
+                string destWay = $@"{destDir}\{photo.name}{photo.dateTaken}{photo.extension}";
+                Console.WriteLine(photo.dateTaken);
+                File.Copy(photo.fileInfo.FullName, destWay);
+                Console.WriteLine($"{count}/{photos.Count} successful");
+                Console.Clear();
+                count++;
             }
+            Console.WriteLine($"{count-1}/{photos.Count} successful");
 
-            //foreach (FileInfo fileinfo in filesInfos)
-            //{
-            //    string withoutExtension = Path.GetFileNameWithoutExtension(fileinfo.Name);
-            //    Console.WriteLine(Path.GetFileNameWithoutExtension(fileinfo.Name));
-            //    string newName = $"{withoutExtension}[new]{fileinfo.Extension}";
-            //    string combine = Path.Combine(destDir, newName);
-            //    fileinfo.CopyTo(combine);
-            //}
-            
+
         }
     }
 }
