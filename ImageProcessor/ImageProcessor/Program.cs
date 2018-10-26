@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
+
 
 namespace ImageProcessor
 {
@@ -24,6 +26,7 @@ namespace ImageProcessor
 
         private static void DateOntoImage(string sourceDir)
         {
+
             var dir = new DirectoryInfo(sourceDir);
             List<FileInfo> filesInfos = new List<FileInfo>(dir.GetFiles("*.jpg"));
             List<Photo> photos = new List<Photo>();
@@ -76,6 +79,7 @@ namespace ImageProcessor
                 count++;
             }
             Console.WriteLine($"{count-1}/{photos.Count} successful");
+
 
 
         }
