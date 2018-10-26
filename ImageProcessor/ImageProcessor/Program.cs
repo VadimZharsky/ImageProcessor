@@ -16,7 +16,7 @@ namespace ImageProcessor
     {
         static void Main(string[] args)
         {
-            string sourceDir = @"D:\c#works\it academy";
+            string sourceDir = @"D:\Media\Media\photo\конец 2017-2018 год";
             //CreateItems(sourceDir);
             DateOntoImage(sourceDir);
             Console.ReadKey();
@@ -41,15 +41,15 @@ namespace ImageProcessor
             foreach (Photo photo in photos)
             {
                 Console.WriteLine($"{count}/{photos.Count} successful");
-                string destWay = $@"{destDir}\{photo.name}{photo.dateTaken}{photo.extension}";
-                FileStream stream = new FileStream(photo.fileInfo.FullName, FileMode.Open, FileAccess.Read);
-                Graphics graphicImage = Graphics.FromImage(photo.photoImage);
-                graphicImage.DrawString(photo.dateTaken, new Font("Arial", 18, FontStyle.Bold),
-                Brushes.Black, new Point(photo.photoImage.Width-250, 10));
-                graphicImage.DrawString(photo.gpsCoords, new Font("Arial", 18, FontStyle.Bold),
+                string destWay = $@"{destDir}\{photo.GetDestName}";
+                FileStream stream = new FileStream(photo.GetInfo.FullName, FileMode.Open, FileAccess.Read);
+                Graphics graphicImage = Graphics.FromImage(photo.GetImageInfo);
+                graphicImage.DrawString(photo.GetDate, new Font("Arial", 18, FontStyle.Bold),
+                Brushes.Black, new Point(photo.GetImageInfo.Width-250, 10));
+                graphicImage.DrawString(photo.GetGPS, new Font("Arial", 18, FontStyle.Bold),
                 Brushes.Black, new Point(10, 10));
                 graphicImage.Save();
-                photo.photoImage.Save(destWay, ImageFormat.Jpeg); 
+                photo.GetImageInfo.Save(destWay, ImageFormat.Jpeg); 
                 Console.Clear();
                 count++;
             }
@@ -71,9 +71,9 @@ namespace ImageProcessor
             }
             foreach (Photo photo in photos)
             {
-                string destWay = $@"{destDir}\{photo.name}{photo.dateTaken}{photo.extension}";
-                Console.WriteLine(photo.dateTaken);
-                File.Copy(photo.fileInfo.FullName, destWay);
+                string destWay = $@"{destDir}\{photo.GetDestName}";
+                Console.WriteLine(photo.GetDate);
+                File.Copy(photo.GetInfo.FullName, destWay);
                 Console.WriteLine($"{count}/{photos.Count} successful");
                 Console.Clear();
                 count++;

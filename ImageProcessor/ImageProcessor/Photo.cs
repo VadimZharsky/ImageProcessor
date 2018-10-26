@@ -27,12 +27,13 @@ namespace ImageProcessor
         //    }
 
         //}
-        public FileInfo fileInfo;
-        public Image photoImage;
-        public string name;
-        public string extension;
-        public string dateTaken;
-        public string gpsCoords;
+        private FileInfo fileInfo;
+        private Image photoImage;
+        private string name;
+        private string extension;
+        private string dateTaken;
+        private string gpsCoords;
+        private string destName;
 
         public Photo(FileInfo fileInfo)
         {
@@ -40,12 +41,46 @@ namespace ImageProcessor
             photoImage = Image.FromFile(fileInfo.FullName);
             name = Path.GetFileNameWithoutExtension(fileInfo.Name);
             extension = fileInfo.Extension;
-            gpsCoords = GetGPS(photoImage);
-            dateTaken = GetDate(photoImage);
-            
+            gpsCoords = GetGPSFromImage(photoImage);
+            dateTaken = GetDateFromImage(photoImage);
+            destName = SetDestName();
+        }    
+        
+        public string GetDate
+        {
+            get{ return dateTaken; }
+        }
+        public FileInfo GetInfo
+        {
+            get { return fileInfo; }
+        }
+        public Image GetImageInfo
+        {
+            get { return photoImage; }
+        }
+        public string GetExtension
+        {
+            get { return extension; }
+        }
+        public string GetGPS
+        {
+            get { return gpsCoords; }
+        }
+        public string GetName
+        {
+            get { return name; }
+        }
+        public string GetDestName
+        {
+            get { return destName; }
+        }
+        private string SetDestName()
+        {
+            return $"{name}{dateTaken}{extension}";
         }
 
-        private string GetDate(Image photoImage)
+
+        private string GetDateFromImage (Image photoImage)
         {
             try
             {
@@ -60,7 +95,7 @@ namespace ImageProcessor
             }
         }
 
-        private string GetGPS(Image photoImage)
+        private string GetGPSFromImage(Image photoImage)
         {
             try
             {
