@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing.Imaging;
-using System.Text.RegularExpressions;
+using ImageInfoLibrary;
 
 
 namespace ImageProcessor
@@ -16,7 +15,7 @@ namespace ImageProcessor
     {
         static void Main(string[] args)
         {
-            string sourceDir = @"D:\Media\Media\photo\конец 2017-2018 год";
+            string sourceDir = @"F:\mes fichiers\DCIM\Camera";
             //CreateItems(sourceDir);
             DateOntoImage(sourceDir);
             Console.ReadKey();
@@ -35,21 +34,22 @@ namespace ImageProcessor
             Directory.CreateDirectory(destDir);
             int count = 1;
             foreach (FileInfo file in filesInfos)
-            {
                 photos.Add(new Photo(file));
-            }
             foreach (Photo photo in photos)
             {
+                Image image = Image.FromFile(photo.GetInfo.FullName);
                 Console.WriteLine($"{count}/{photos.Count} successful");
-                string destWay = $@"{destDir}\{photo.GetDestName}";
+                string actualDate = ImageInfoLib.GetDate.AsString(photo.GetInfo, image);
                 FileStream stream = new FileStream(photo.GetInfo.FullName, FileMode.Open, FileAccess.Read);
-                Graphics graphicImage = Graphics.FromImage(photo.GetImageInfo);
-                graphicImage.DrawString(photo.GetDate, new Font("Arial", 18, FontStyle.Bold),
-                Brushes.Black, new Point(photo.GetImageInfo.Width-250, 10));
-                graphicImage.DrawString(photo.GetGPS, new Font("Arial", 18, FontStyle.Bold),
+                Graphics graphicImage = Graphics.FromImage(image);
+                graphicImage.DrawString(actualDate, new Font("Arial", 18, FontStyle.Bold),
+                Brushes.Black, new Point(image.Width-250, 10));
+                graphicImage.DrawString(ImageInfoLib.GetGPS(image), new Font("Arial", 18, FontStyle.Bold),
                 Brushes.Black, new Point(10, 10));
                 graphicImage.Save();
-                photo.GetImageInfo.Save(destWay, ImageFormat.Jpeg); 
+                string destWay = $@"{destDir}\{SetDestName(photo, actualDate)}";
+                image.Save(destWay, ImageFormat.Jpeg);
+                image.Dispose();
                 Console.Clear();
                 count++;
             }
@@ -71,17 +71,21 @@ namespace ImageProcessor
             }
             foreach (Photo photo in photos)
             {
-                string destWay = $@"{destDir}\{photo.GetDestName}";
-                Console.WriteLine(photo.GetDate);
+                Image image = Image.FromFile(photo.GetInfo.FullName);
+                string actualDate = ImageInfoLib.GetDate.AsString(photo.GetInfo, image);
+                Console.WriteLine(actualDate);
+                image.Dispose();
+                string destWay = $@"{destDir}\{SetDestName(photo, actualDate)}";
                 File.Copy(photo.GetInfo.FullName, destWay);
                 Console.WriteLine($"{count}/{photos.Count} successful");
                 Console.Clear();
                 count++;
             }
             Console.WriteLine($"{count-1}/{photos.Count} successful");
-
-
-
+        }
+        private static string SetDestName(Photo photo, string dateTaken)
+        {
+            return $"{photo.GetName}{dateTaken}{photo.GetExtension}";
         }
     }
 }
