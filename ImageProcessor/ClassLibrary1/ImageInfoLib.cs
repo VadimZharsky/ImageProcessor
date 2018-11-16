@@ -21,6 +21,11 @@ namespace ImageInfoLibrary
                 DateTime actualDate = DateGetter(fileInfo, image);
                 return DateParams(actualDate);
             }
+            public static string Year(FileInfo file, Image image)
+            {
+                DateTime actualDate = AsDate(file, image);
+                return actualDate.Year.ToString();
+            }
         }
         
         internal static DateTime DateGetter(FileInfo fileInfo, Image image)
